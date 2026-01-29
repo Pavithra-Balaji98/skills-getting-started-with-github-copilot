@@ -5,6 +5,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const messageDiv = document.getElementById("message");
 
   // Function to fetch activities from API
+
+function unregisterParticipant(participant) {
+  // Logic to unregister the participant
+  console.log(`Unregistering ${participant}`);
+  // You can add an API call here to remove the participant from the server
+}
   async function fetchActivities() {
     try {
       const response = await fetch("/activities");
@@ -25,6 +31,12 @@ document.addEventListener("DOMContentLoaded", () => {
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
+          <div class="participants-section">
+            <h5>Current Participants (${details.participants.length}/${details.max_participants})</h5>
+            <ul class="participants-list">
+              ${details.participants.map(participant => `<li>${participant} <button class='delete-btn' onclick='unregisterParticipant("${participant}")'>🗑️</button></li>`).join('')}
+            </ul>
+          </div>
         `;
 
         activitiesList.appendChild(activityCard);
@@ -62,6 +74,8 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
         signupForm.reset();
+        // Refresh the activities list to show the new participant
+        fetchActivities();
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
         messageDiv.className = "error";
